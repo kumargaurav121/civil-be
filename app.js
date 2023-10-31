@@ -1,12 +1,28 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const passport = require('passport');
 
 // MySQL Connection
-const connection = require('./config/mysqlConfig')
+const connection = require('./config/mysqlConfig');
 
 // Routers
 const authRoute = require('./router/authRoute');
 
 var app = express();
+// parse application/json
+app.use(bodyParser.json());
+//parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+    cors({
+        origin: ['http://localhost:3000'],
+        methods: ['GET', 'POST'],
+        credentials: true,
+    })
+);
+app.use(passport.initialize());
+require('./config/jwtStrategy');
 
 // Create DB Connection
 const mysqlConnection = () => {
