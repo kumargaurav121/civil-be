@@ -47,8 +47,6 @@ router.post('/add', passport.authenticate('jwt', { session: false }), async (req
     }
 
     // Update the credits
-    // let today = (new Date()).toJSON().slice(0, 19).replace('T', ' ');
-    // console.log(today)
     await connection.query(`UPDATE credits SET credit_count = ${credits}, credit_type = '${credit_type}' where user_id=${user_id}`)
     .then(([rows, fields]) => {
         if (rows.affectedRows == 1){

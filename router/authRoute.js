@@ -46,9 +46,7 @@ router.post('/register', registerValidation, async (req, res) => {
                     return res.status(201).send({"success": true, "message": "User created. Please login!", "error": null});
                     
                 } catch(e) {
-                    console.log("::::::::::::::::: 1")
                     await connection.rollback();
-                    console.log("::::::::::::::::: 2")
                     return res.status(400).send({"success": false, "message": "Something went wrong", "error": e});
                 }
 

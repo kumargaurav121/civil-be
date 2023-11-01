@@ -1,7 +1,6 @@
 const { validateEmail } = require('../utils/fieldChecks')
 
 registerValidation = (req, res, next) => {
-    // console.log(req.body)
     const email = req.body.email;
     const password = req.body.password;
 
