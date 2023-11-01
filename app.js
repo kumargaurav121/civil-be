@@ -8,6 +8,7 @@ const connection = require('./config/mysqlConfig');
 
 // Routers
 const authRoute = require('./router/authRoute');
+const creditRoute = require('./router/creditRoute');
 
 var app = express();
 // parse application/json
@@ -21,19 +22,23 @@ app.use(
         credentials: true,
     })
 );
+
+// JWS Strategy
 app.use(passport.initialize());
 require('./config/jwtStrategy');
 
 // Create DB Connection
 const mysqlConnection = () => {
-    return connection.connect(err => {
-        if (err) throw err;
-        console.log('Successfully Connected to MySQL...')
-    })
+    // return connectionPromise.connect(err => {
+    //     if (err) throw err;
+    //     console.log('Successfully Connected to MySQL...')
+    // })
+    return connection.connect().then(x => console.log("Successfully Connected to MySQL...")).catch(e => console.log("Error in connection:::", e))
 }
 mysqlConnection()
 
 app.use('/api/user', authRoute)
+app.use('/api/credit', creditRoute)
 
 // Routers
 app.get('/', (req, res) => {

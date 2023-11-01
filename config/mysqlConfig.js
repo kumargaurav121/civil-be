@@ -12,6 +12,9 @@ const connection = mysql.createConnection({
   database: process.env.DB_DATABASE
 });
 
+// Promise connection
+const connectionPromise = connection.promise();
+
 // simple query
 // connection.query(
 //   'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
@@ -30,4 +33,4 @@ const connection = mysql.createConnection({
 //   }
 // );
 
-module.exports = connection
+module.exports = connectionPromise

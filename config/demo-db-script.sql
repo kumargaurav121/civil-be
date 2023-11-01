@@ -1,12 +1,31 @@
-CREATE DATABASE IF NOT EXISTS civil;
+DROP DATABASE civil;
+
+CREATE DATABASE civil;
 
 use civil;
 
+-- Users Table
 CREATE TABLE IF NOT EXISTS users (
-id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-username VARCHAR(255) NOT NULL,
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 email VARCHAR(100) NOT NULL UNIQUE,
-password CHAR(64) NOT NULL,
+password VARCHAR(64) NOT NULL,
 created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- INSERT INTO users (email, password, created_at, updated_at) VALUES 
+-- ('kg@kg.com', '$2a$10$W/vcM0lF0KlgezSqkpJjFusoMt1iZMaowuvMdz1CTiGlXFlTpmi.C', '2023-11-01 01:43:32', '2023-11-01 01:43:32');
+-- Password is 12345678
+
+-- Credits table
+CREATE TABLE IF NOT EXISTS credits (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+user_id INT,
+credit_count INT DEFAULT 0,
+credit_type VARCHAR(64) DEFAULT 'month',
+credited_on datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+

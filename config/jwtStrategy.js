@@ -19,17 +19,16 @@ jwtOptions.secretOrKey = process.env.SECRET_JWT;
 
 // lets create our strategy for web token
 passport.use(new JwtStrategy(jwtOptions, (jwt_payload, done) => {
-    connection.query(`SELECT email FROM users where id = '${jwt_payload.email}'`, (err, user) => {
-        if (err) {
-            return done(err, false);
-        }
+    connection.query(`SELECT id, email FROM users where id = '${jwt_payload.id}'`)
+    .then(([user, fields]) => {
         if (user.length > 0) {
-            return done(null, user);
+            return done(null, user[0]);
         } else {
             return done(null, false);
             // or you could create a new account
         }
-    });
+    })
+    .catch(err => done(err, false))
 }));
 
 // use the strategy

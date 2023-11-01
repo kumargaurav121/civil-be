@@ -20,17 +20,38 @@ router.post('/register', registerValidation, async (req, res) => {
             await bcrypt.hash(req.body.password, salt, async (err, hash) => {
                 if (err) throw err;
                 password = hash;
-                connection.query(`SELECT email FROM users where email = '${req.body.email}'`, (err, rows) => {
-                    if (err) throw err;
-                    if (rows.length > 0) {
+
+                try{
+                        
+                    // Starting the transaction
+                    await connection.beginTransaction();
+
+                    let user_id = null;
+
+                    const [rows1, fields1] = await connection.query(`SELECT email FROM users where email = '${req.body.email}'`);
+                    if (rows1.length > 0) {
                         return res.status(422).send({"success": false, "message": "User already exists", "error": null}); 
                     }
-                    let query = `INSERT INTO users (email, password) VALUES ('${req.body.email}', '${password}')`
-                    connection.query(query, (err, rows) => {
-                        if (err) throw err;
-                        res.status(201).send({"success": true, "message": "User created. Please login!", "error": null});
-                    })
-                })
+
+                    const [rows2, fields2] = await connection.query(`INSERT INTO users (email, password) VALUES ('${req.body.email}', '${password}')`);
+
+                    const [rows3, fields3] = await connection.query(`SELECT id FROM users where email = '${req.body.email}'`);
+
+                    user_id = rows3[0].id;
+
+                    const [rows4, fields4] = await connection.query(`INSERT INTO credits (user_id) VALUES (${user_id})`);
+
+                    await connection.commit();
+
+                    return res.status(201).send({"success": true, "message": "User created. Please login!", "error": null});
+                    
+                } catch(e) {
+                    console.log("::::::::::::::::: 1")
+                    await connection.rollback();
+                    console.log("::::::::::::::::: 2")
+                    return res.status(400).send({"success": false, "message": "Something went wrong", "error": e});
+                }
+
             });
         });
     } catch(e) {
@@ -39,23 +60,23 @@ router.post('/register', registerValidation, async (req, res) => {
 });
 
 router.post('/login', registerValidation, async (req, res) => {
-    try{
-        connection.query(`Select * from users where email = '${req.body.email}'`, (err, rows) => {
-            if (err) throw err;
-            if (rows.length == 0) {
-                return res.status(422).send({"success": false, "message": "User not found", "error": null}); 
+
+    connection.query(`Select * from users where email = '${req.body.email}'`)
+    .then(([rows, fields]) => {
+        if (rows.length == 0) {
+            return res.status(422).send({"success": false, "message": "User not found", "error": null}); 
+        }
+        bcrypt.compare(req.body.password, rows[0].password, function(err, response) {
+            if (!response){
+                return res.status(422).send({"success": false, "message": "Wrong Password", "error": null});
             }
-            bcrypt.compare(req.body.password, rows[0].password, function(err, response) {
-                if (!response){
-                    return res.status(422).send({"success": false, "message": "Wrong Password", "error": null});
-                }
-                let token = jwt.sign(rows[0], process.env.SECRET_JWT);
-                res.status(200).send({"success": token, "message": "User created. Please login!", "error": null});
-            });
-        })
-    } catch(e) {
-        return res.status(400).send({"success": false, "message": "Something went wrong", "error": e});
-    }
+            let token = jwt.sign(rows[0], process.env.SECRET_JWT);
+            res.status(200).send({"success": true, "token": token, "message": "User created. Please login!", "error": null});
+        });
+    })
+    .catch(err => {
+        return res.status(400).send({"success": false, "message": "Something went wrong", "error": err});
+    })
 });
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), function(req, res) {
