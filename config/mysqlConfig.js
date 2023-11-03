@@ -9,20 +9,21 @@ const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
+  database: process.env.DB_DATABASE,
+  timezone: 'local'
 });
 
 // Promise connection
 const connectionPromise = connection.promise();
 
-// simple query
-// connection.query(
-//   'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
-//   function(err, results, fields) {
-//     console.log(results); // results contains rows returned by server
-//     console.log(fields); // fields contains extra meta data about results, if available
+// // simple query
+// connectionPromise.query("SET time_zone='+05:50';", error => {
+//   if(error){
+//       throw error
 //   }
-// );
+//   console(" Timezone is updated to IST")
+// })
+
 
 // with placeholder
 // connection.query(

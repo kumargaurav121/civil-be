@@ -4,10 +4,12 @@ const connection = require('../config/mysqlConfig')
 const validSubscription = async (req, res, next) => {
     let credit_type = null;
     let credited_on = null;
-    await connection.query(`SELECT credit_type, credited_on FROM credits where user_id = ${req.user.id}`)
+    let credit_count = null;
+    await connection.query(`SELECT credit_count, credit_type, credited_on FROM credits where user_id = ${req.user.id}`)
     .then(([rows, fields]) => {
         credit_type =  rows[0].credit_type;
         credited_on =  rows[0].credited_on;
+        credit_count =  rows[0].credit_count;
     })
     .catch(err => {
         return res.status(400).send({"success": false, "message": "Something went wrong", "error": err})
@@ -19,7 +21,8 @@ const validSubscription = async (req, res, next) => {
     
     if ((credit_type == 'month' && diffDays > 30) ||
     (credit_type == 'quarter' && diffDays > 90) ||
-    (credit_type == 'year' && diffDays > 365)) {
+    (credit_type == 'year' && diffDays > 365) ||
+    credit_count == 0) {
         await connection.query(`UPDATE credits SET credit_count = 0 where user_id = ${req.user.id}`)
         .then(([rows, fields]) => {
             return res.status(400).send({"success": false, "message": "Subscription has ended. Please renew it!", "error": null});

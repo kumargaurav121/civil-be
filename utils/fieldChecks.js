@@ -6,4 +6,16 @@ const validateEmail = (email) => {
         );
 }
 
-module.exports = {validateEmail}
+const validateLimit = (params) => {
+    let {limit, offset} = params;
+        
+    if (limit == undefined){
+        limit = 10;
+    }
+    if (offset == undefined){
+        offset = 0;
+    }
+    return {limit, offset};
+}
+
+module.exports = {validateEmail, validateLimit}

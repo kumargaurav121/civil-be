@@ -9,6 +9,8 @@ const connection = require('./config/mysqlConfig');
 // Routers
 const authRoute = require('./router/authRoute');
 const creditRoute = require('./router/creditRoute');
+const projectRoute = require('./router/projectRoute');
+const clientRoute = require('./router/clientRoute');
 
 var app = express();
 // parse application/json
@@ -28,13 +30,17 @@ app.use(passport.initialize());
 require('./config/jwtStrategy');
 
 // Create DB Connection
-const mysqlConnection = () => {
-    return connection.connect().then(x => console.log("Successfully Connected to MySQL...")).catch(e => console.log("Error in connection:::", e))
+const mysqlConnection = async () => {
+    await connection.connect().then(x => console.log("Successfully Connected to MySQL...")).catch(e => console.log("Error in connection:::", e));
+
+    // await connection.query("SET time_zone='+05:50'").then(x => console.log("Timezone is updated to IST")).catch(e => console.log("Error in connection:::", e))
 }
 mysqlConnection()
 
 app.use('/api/user', authRoute)
 app.use('/api/credit', creditRoute)
+app.use('/api/project', projectRoute)
+app.use('/api/client', clientRoute)
 
 // Routers
 app.get('/', (req, res) => {

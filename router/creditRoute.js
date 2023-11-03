@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const configs = require('dotenv');
 const passport = require('passport');
+const moment = require('moment-timezone');
 
 const { validSubscription } = require('../validation/subscriptionValidation');
+const { validAdmin } = require('../validation/adminValidate');
 
 configs.config();
 
@@ -10,7 +12,7 @@ configs.config();
 const connection = require('../config/mysqlConfig')
 
 // Routers
-router.post('/add', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.post('/add', passport.authenticate('jwt', { session: false }), validAdmin, async (req, res) => {
     let { user_id, credit_type } = req.body;
 
     // Check if the user who is updating this is KG 
@@ -46,8 +48,11 @@ router.post('/add', passport.authenticate('jwt', { session: false }), async (req
         return res.status(422).send({"success": false, "message": "Credit type not incorrect", "error": null});
     }
 
+    let date1 = new Date();
+    let currentTime = moment(date1).tz('Asia/Kolkata').format();
+
     // Update the credits
-    await connection.query(`UPDATE credits SET credit_count = ${credits}, credit_type = '${credit_type}' where user_id=${user_id}`)
+    await connection.query(`UPDATE credits SET credit_count = ${credits}, credit_type = '${credit_type}', credited_on='${currentTime}' where user_id=${user_id}`)
     .then(([rows, fields]) => {
         if (rows.affectedRows == 1){
             return res.status(200).send({"success": true, "message": "Credits Updated", "error": null});
