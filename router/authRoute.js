@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const configs = require('dotenv');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const {registerValidation} = require('../validation/authValidation');// MySQL Connection
+const { registerValidation, loginValidation } = require('../validation/authValidation');// MySQL Connection
 
 let salt = bcrypt.genSaltSync(10);
 
@@ -33,7 +33,8 @@ router.post('/register', registerValidation, async (req, res) => {
                         return res.status(422).send({"success": false, "message": "User already exists", "error": null}); 
                     }
 
-                    const [rows2, fields2] = await connection.query(`INSERT INTO users (email, password) VALUES ('${req.body.email}', '${password}')`);
+                    const [rows2, fields2] = await connection.query(`INSERT INTO users (email, password, name, phone) VALUES 
+                                            ('${req.body.email}', '${password}', '${req.body.name}', '${req.body.phone}')`);
 
                     const [rows3, fields3] = await connection.query(`SELECT id FROM users where email = '${req.body.email}'`);
 
@@ -57,7 +58,7 @@ router.post('/register', registerValidation, async (req, res) => {
     }
 });
 
-router.post('/login', registerValidation, async (req, res) => {
+router.post('/login', loginValidation, async (req, res) => {
 
     connection.query(`Select * from users where email = '${req.body.email}'`)
     .then(([rows, fields]) => {
