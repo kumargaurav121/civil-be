@@ -20,8 +20,10 @@ INSERT INTO clients (user_id, name, email, phone, address) VALUES
 
 -- Create Project
 INSERT INTO projects (user_id, client_id, name, description, status) VALUES 
-(1, 1, 'Prj 1', '"This is the first project', 'Pitched');
+(1, 1, 'Prj 1', 'This is the first project', 'Pitched');
 INSERT INTO projects (user_id, client_id, name, description, status) VALUES 
 (2, 2, 'Prj 2', 'This is the second project', 'In-Progress');
 INSERT INTO projects (user_id, client_id, name, description, status) VALUES 
 (2, 2, 'Prj 3', 'This is the third project', 'Completed');
+INSERT INTO projects (user_id, client_id, name, description, status) VALUES 
+(1, 1, 'Prj 4', 'This is the forth project', 'Completed');

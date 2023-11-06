@@ -11,6 +11,7 @@ const authRoute = require('./router/authRoute');
 const creditRoute = require('./router/creditRoute');
 const projectRoute = require('./router/projectRoute');
 const clientRoute = require('./router/clientRoute');
+const userRoute = require('./router/userRoute');
 
 var app = express();
 // parse application/json
@@ -37,10 +38,11 @@ const mysqlConnection = async () => {
 }
 mysqlConnection()
 
-app.use('/api/user', authRoute)
+app.use('/api/auth', authRoute)
 app.use('/api/credit', creditRoute)
 app.use('/api/project', projectRoute)
 app.use('/api/client', clientRoute)
+app.use('/api/user', userRoute)
 
 // Routers
 app.get('/', (req, res) => {

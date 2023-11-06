@@ -69,13 +69,22 @@ router.post('/login', loginValidation, async (req, res) => {
             if (!response){
                 return res.status(422).send({"success": false, "message": "Wrong Password", "error": null});
             }
-            let token = jwt.sign(rows[0], process.env.SECRET_JWT);
+            let token = jwt.sign(rows[0], process.env.SECRET_JWT, { expiresIn: '1d' });
             res.status(200).send({"success": true, "token": token, "message": "User created. Please login!", "error": null});
         });
     })
     .catch(err => {
         return res.status(400).send({"success": false, "message": "Something went wrong", "error": err});
     })
+});
+
+router.post('/logout', passport.authenticate('jwt', { session: false }),async (req, res) => {
+    req.logout(function(err) {
+        console.log(err)
+        if (err) { return res.status(400).send({"success": false, "message": "Something went wrong", "error": err}); }
+        res.status(200).send({"success": true, "message": "User logged out", "error": null});
+    });
+    return "ok"
 });
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), function(req, res) {
