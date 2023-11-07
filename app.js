@@ -53,6 +53,6 @@ app.get('/', (req, res) => {
 });
 
 // Server
-app.listen(3000, async() => {
-    console.log('Example app listening on port 3000!');
+app.listen(8000, async() => {
+    console.log('Example app listening on port 8000!');
 });
