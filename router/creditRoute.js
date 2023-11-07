@@ -58,7 +58,7 @@ router.post('/add', passport.authenticate('jwt', { session: false }), validAdmin
             return res.status(200).send({"success": true, "message": "Credits Updated", "error": null});
         }
         else{
-            res.status(400).send({"success": false, "message": "Something went wrong, please try again later", "error": err})
+            res.status(400).send({"success": false, "message": "Something went wrong, please try again later", "error": null})
         }
     })
     .catch(err => res.status(400).send({"success": false, "message": "Something went wrong", "error": err}))

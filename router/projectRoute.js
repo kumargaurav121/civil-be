@@ -76,6 +76,10 @@ router.get('/list', passport.authenticate('jwt', { session: false }), validSubsc
     }
 });
 
+router.get('/:id', passport.authenticate('jwt', { session: false }), function(req, res) {
+    res.json({ msg: 'Congrats! You are seeing this because you are authorized'});
+});
+
 router.get('/protected', passport.authenticate('jwt', { session: false }), validSubscription, function(req, res) {
     res.json({ msg: 'Congrats! You are seeing this because you are authorized'});
 });
