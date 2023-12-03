@@ -45,7 +45,8 @@ router.get('/fetch-dashboard', passport.authenticate('jwt', { session: false }),
     cl.address as client_address, 
     "type" as type, 
     50000 as price, 
-    p.status as status 
+    p.status as status,
+    cr.credit_count as credit_count
     from users u
     join credits cr on u.id = cr.user_id
     join clients cl on u.id = cl.user_id
