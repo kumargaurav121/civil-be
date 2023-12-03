@@ -33,6 +33,34 @@ router.post('/change-password', passport.authenticate('jwt', { session: false })
     });
 });
 
+router.get('/fetch-dashboard', passport.authenticate('jwt', { session: false }), async (req, res) => {
+
+    const user_id = req.user.id;
+
+    // Get the data from the db
+    let query = `SELECT 
+    u.name as user_name, 
+    p.name as project_name, 
+    cl.name as client_name, 
+    cl.address as client_address, 
+    "type" as type, 
+    50000 as price, 
+    p.status as status 
+    from users u
+    join credits cr on u.id = cr.user_id
+    join clients cl on u.id = cl.user_id
+    join projects p on cl.id = p.client_id
+    where u.id = ${user_id};`
+    await connection.query(query)
+    .then(([rows, fields]) => {
+        if (rows.length == 0){
+            return res.status(200).send({"success": false, "message": "Data not found", "error": null});
+        }
+        return res.status(200).send({"success": true, "message": "Data found", "rows": rows, "error": null});
+    })
+    .catch(err => res.status(200).send({"success": false, "message": "Something went wrong", "error": err}))
+});
+
 router.get('/protected', passport.authenticate('jwt', { session: false }), function(req, res) {
     res.json({ msg: 'Congrats! You are seeing this because you are authorized'});
 });
