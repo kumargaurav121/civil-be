@@ -55,4 +55,14 @@ router.patch('/edit', passport.authenticate('jwt', { session: false }), editClie
 
 });
 
+router.get('/my-clients', passport.authenticate('jwt', { session: false }), async (req, res) => {    
+    try{
+        [rows, fields] = await connection.query(`SELECT id, name FROM clients WHERE user_id = ${req.user.id}`)
+        return res.status(201).send({"success": true, "message": "Client list fetched!", clients: rows, "error": null});
+    } catch (e) {
+        return res.status(400).send({"success": false, "message": "Something went wrong", "error": e});
+    }
+
+});
+
 module.exports = router;
