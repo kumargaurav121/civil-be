@@ -54,7 +54,7 @@ const addProjectValidation = async (req, res, next) => {
         [rows, fields] = await connection.query(`SELECT * FROM clients WHERE id = ${client_id}`);
         result = rows[0]
         if (!result){
-            return res.status(422).send({"success": false, "message": "Client info is not given", "error": null});
+            return res.status(422).send({"success": false, "message": "Client not found", "error": null});
         } else if (result.user_id != req.user.id){
             return res.status(422).send({"success": false, "message": "You are not authorised to create the project under this client", "error": null});
         }
