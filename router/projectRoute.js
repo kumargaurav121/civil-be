@@ -15,6 +15,7 @@ const connection = require('../config/mysqlConfig')
 router.post('/add', passport.authenticate('jwt', { session: false }), validSubscription, addProjectValidation, async (req, res) => {
 
     let { name, description, status, client_id, client_name, client_add, client_ph, client_email } = req.body;
+    console.log(req.body)
 
     // Check if client id present, if not then create client
     if (!client_id){
@@ -34,7 +35,7 @@ router.post('/add', passport.authenticate('jwt', { session: false }), validSubsc
                                                 ('${req.user.id}', '${name}', '${description}', '${status}', ${client_id})`);
         
         if (!rows2.insertId || rows2.insertId < 0) {
-            return res.status(400).send({"success": false, "message": "Can't create the project", "error": null});
+            return res.status(400).send({"success": false, "message": "Can't create the project", "error": "Can't create the project"});
         }
     } catch (e) {
         return res.status(400).send({"success": false, "message": "Can't create the project", "error": e});
@@ -46,7 +47,7 @@ router.post('/add', passport.authenticate('jwt', { session: false }), validSubsc
         [rows3, fields3] = await connection.query(`UPDATE credits SET credit_count = credit_count-1 where user_id = ${req.user.id}`)
         
         if (!rows3.affectedRows || rows2.affectedRows < 0) {
-            return res.status(400).send({"success": false, "message": "Can't update the credit score", "error": null});
+            return res.status(400).send({"success": false, "message": "Can't update the credit score", "error": "Can't update the credit score"});
         }
     } catch (e) {
         return res.status(400).send({"success": false, "message": "Can't update the credit score", "error": e});
