@@ -30,4 +30,13 @@ INSERT INTO projects (user_id, client_id, name, description, status) VALUES
 INSERT INTO projects (user_id, client_id, name, description, status) VALUES 
 (1, 1, 'Prj 4', 'This is the forth project', 'Completed');
 INSERT INTO projects (user_id, client_id, name, description, status) VALUES 
-(1, 3, 'Prj 4', 'This is the fifth project', 'Completed');
+(1, 3, 'Prj 5', 'This is the fifth project', 'Completed');
+
+
+-- Create Rooms
+INSERT INTO rooms (user_id, project_id, name, length, width, height, price, discount) VALUES 
+(1, 1, "Kitchen", 3400, 3400, 3400, 0, 0);
+INSERT INTO rooms (user_id, project_id, name, length, width, height, price, discount) VALUES 
+(1, 1, "Bedroom", 3400, 3400, 3400, 0, 0);
+
+
