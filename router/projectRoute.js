@@ -156,7 +156,7 @@ router.get(
       p.status as project_status,
       p.description as project_description,
       r.id as room_id,
-      r.name as rooms_name,
+      r.name as room_name,
       r.length as room_length,
       r.width as room_width,
       r.height as room_height,
