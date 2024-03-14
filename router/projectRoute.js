@@ -164,9 +164,9 @@ router.get(
       r.discount as room_discount,
       r.updated_at as last_update
       from projects p
-      join rooms r on p.id = r.project_id
       join clients c on c.id = p.client_id
-      where r.user_id = 1;`;
+      left join rooms r on p.id = r.project_id
+      where p.id = ${project_id};`;
 
       [rows, fields] = await connection.query(query_for_project_details);
 
