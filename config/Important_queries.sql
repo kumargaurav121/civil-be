@@ -8,6 +8,8 @@ SELECT * FROM civil.clients;
 
 SELECT * from civil.rooms;
 
+SELECT * FROM calculations;
+
 SELECT * FROM civil.clients limit 1, 3;
 DELETE FROM civil.clients WHERE id=10;
 DELETE FROM civil.projects WHERE id=2;
