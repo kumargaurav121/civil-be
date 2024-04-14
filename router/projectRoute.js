@@ -192,6 +192,71 @@ router.get(
 );
 
 router.get(
+  "/:pid/room/:rid",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    let project_id = req.params.pid;
+    let room_id = req.params.rid;
+
+    try {
+      query_for_project_id = `SELECT * FROM projects WHERE id = ${project_id}`;
+      [rows, fields] = await connection.query(query_for_project_id);
+
+      if (rows.length === 0) {
+        return res
+          .status(404)
+          .send({ success: false, message: "Project not found", error: null });
+      }
+
+      query_for_room_id = `SELECT * FROM rooms WHERE id = ${room_id}`;
+      [rows1, fields1] = await connection.query(query_for_room_id);
+
+      if (rows1.length === 0) {
+        return res
+          .status(404)
+          .send({ success: false, message: "Room not found", error: null });
+      }
+
+      query_for_calculations_details = `SELECT 
+      cal.id as id,
+      cal.category_id as category_id,
+      cal.sub_category_id as sub_category_id,
+      c.name as category,
+      s.name as sub_category,
+      cal.wastage as wastage,
+      cal.counts as counts,
+      cal.cost_per_unit as cost_per_unit,
+      cal.price as price
+      FROM calculations cal
+      left join category c on cal.category_id = c.id
+      left join sub_category s on cal.sub_category_id = s.id
+      WHERE cal.room_id = ${room_id};`;
+
+      [rows, fields] = await connection.query(query_for_calculations_details);
+
+      if (rows.length === 0) {
+        return res
+          .status(404)
+          .send({ success: false, message: "Calculations not found", error: null });
+      }
+
+      return res.status(200).send({
+        success: true,
+        message: "Room details fetched!",
+        calculations: rows,
+        error: null,
+      });
+
+    } catch (e) {
+      console.log(e)
+      return res
+        .status(400)
+        .send({ success: false, message: "Something went wrong", error: e });
+    }
+  }
+);
+
+router.get(
   "/protected",
   passport.authenticate("jwt", { session: false }),
   validSubscription,

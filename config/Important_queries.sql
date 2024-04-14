@@ -55,5 +55,21 @@ left join rooms r on p.id = r.project_id
 where p.id = 5;
 
 
+SELECT 
+cal.id as id,
+cal.category_id as category_id,
+cal.sub_category_id as sub_category_id,
+c.name as category,
+s.name as sub_category,
+cal.wastage as wastage,
+cal.counts as counts,
+cal.cost_per_unit as cost_per_unit,
+cal.price as price
+FROM calculations cal
+left join category c on cal.category_id = c.id
+left join sub_category s on cal.sub_category_id = s.id
+WHERE cal.room_id = 1;
+
+
 
 
