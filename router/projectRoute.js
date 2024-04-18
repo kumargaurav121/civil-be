@@ -182,7 +182,6 @@ router.get(
         rooms: rows,
         error: null,
       });
-
     } catch (e) {
       return res
         .status(400)
@@ -235,9 +234,11 @@ router.get(
       [rows, fields] = await connection.query(query_for_calculations_details);
 
       if (rows.length === 0) {
-        return res
-          .status(404)
-          .send({ success: false, message: "Calculations not found", error: null });
+        return res.status(404).send({
+          success: false,
+          message: "Calculations not found",
+          error: null,
+        });
       }
 
       return res.status(200).send({
@@ -246,9 +247,81 @@ router.get(
         calculations: rows,
         error: null,
       });
-
     } catch (e) {
-      console.log(e)
+      console.log(e);
+      return res
+        .status(400)
+        .send({ success: false, message: "Something went wrong", error: e });
+    }
+  }
+);
+
+router.get(
+  "/rooms/calulations/categories",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    let project_id = req.params.pid;
+    let room_id = req.params.rid;
+
+    try {
+      query = `SELECT
+      s.id,
+      s.category_id,
+      c.name as category_name,
+      s.name,
+      s.unit
+      from sub_category s
+      LEFT JOIN category c ON s.category_id = c.id;`;
+
+      [rows, fields] = await connection.query(query);
+
+      if (rows.length === 0) {
+        return res
+          .status(404)
+          .send({ success: false, message: "Categories", error: null });
+      }
+
+      let cat_array = []; // {category_name: "xyz", category_id: 1, sub_category_name: "xyz", sub_category_id: 1}
+
+      rows.map((item) => {
+        let cat = cat_array.filter(
+          (x) => x.category_name === item.category_name
+        );
+        if (cat.length === 0) {
+          cat_array.push({
+            category_name: item.category_name,
+            category_id: item.category_id,
+            sub_category: [
+              {
+                sub_category_name: item.name,
+                sub_category_id: item.id,
+                unit: item.unit,
+              },
+            ],
+          });
+        } else {
+          cat_array.map((row) => {
+            if (row.category_name === item.category_name) {
+              row.sub_category.push({
+                sub_category_name: item.name,
+                sub_category_id: item.id,
+                unit: item.unit,
+              });
+            }
+          });
+        }
+      });
+
+      // return res.send(cat_array);
+
+      return res.status(200).send({
+        success: true,
+        message: "Categories fetched!",
+        calculations: cat_array,
+        error: null,
+      });
+    } catch (e) {
+      console.log(e);
       return res
         .status(400)
         .send({ success: false, message: "Something went wrong", error: e });
